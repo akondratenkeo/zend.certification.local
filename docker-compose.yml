@@ -1,0 +1,47 @@
+version: "3"
+services:
+
+  project.db.primary:
+    image: mysql:5.7
+    container_name: ${PROJECT_CONTAINER}.db.primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./conf/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+
+  project.httpd2:
+    image: httpd:2.4
+    container_name: ${PROJECT_CONTAINER}.httpd2
+    working_dir: ${PROJECT_WORKING_DIR}
+    depends_on:
+      - project.db.primary
+      - project.php.primary
+    volumes:
+      - ./${PROJECT_PATH}:${PROJECT_WORKING_DIR}
+      - ./conf/httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./conf/httpd/extra/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+    ports:
+      - "${HOST_PORT}:80"
+
+  project.php.primary:
+    build: build/php/${PHP_PRIMARY}
+    container_name: ${PROJECT_CONTAINER}.php.primary
+    working_dir: ${PROJECT_WORKING_DIR}
+    environment:
+      PHP_IDE_CONFIG: "serverName=${PHP_XDEBUG_SERVER_NAME}"
+      PHP_XDEBUG_ENABLED: ${PHP_XDEBUG_ENABLED}
+      XDEBUG_CONFIG: "remote_host=${PHP_XDEBUG_REMOTE_HOST}"
+    volumes:
+      - ./${PROJECT_PATH}:${PROJECT_WORKING_DIR}
+
+  project.blackfire:
+    image: blackfire/blackfire
+    container_name: ${PROJECT_CONTAINER}.blackfire
+    environment:
+      - BLACKFIRE_CLIENT_ID=${BLACKFIRE_CLIENT_ID}
+      - BLACKFIRE_CLIENT_TOKEN=${BLACKFIRE_CLIENT_TOKEN}
+      - BLACKFIRE_SERVER_ID=${BLACKFIRE_SERVER_ID}
+      - BLACKFIRE_SERVER_TOKEN=${BLACKFIRE_SERVER_TOKEN}

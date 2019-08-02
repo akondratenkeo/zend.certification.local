@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+CURRENT_UID="$(id -u):$(id -g)"
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. >/dev/null && pwd )"
+set -a
+source "$DIR/.env"
+
+echo "***************************"
+echo "Hostname: ${HOST_NAME}"
+echo "***************************"
+
+if ! grep -q "127.0.0.1 ${HOST_NAME}" /etc/hosts; then
+    read -p "Add '${HOST_NAME}' to /etc/hosts? " -n 1 -r
+    echo # (optional) move to a new line
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "127.0.0.1 ${HOST_NAME}" | sudo tee -a /etc/hosts
+    fi
+fi
+
+if [[ ! -d $DIR/${PROJECT_PATH} ]]; then
+    FOLDER_EXISTED=0
+    mkdir $DIR/${PROJECT_PATH}
+else
+    FOLDER_EXISTED=1
+fi
+
+if [[ ! -f $DIR/${PROJECT_INIT_FLAG} ]]; then
+    touch $DIR/${PROJECT_INIT_FLAG}
+    docker-compose -f $DIR/docker-compose.yml -p ${HOST_NAME} up --detach --build --force-recreate
+else
+    docker-compose -f $DIR/docker-compose.yml -p ${HOST_NAME} start
+fi
+
