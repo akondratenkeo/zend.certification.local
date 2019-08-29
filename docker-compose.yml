@@ -11,6 +11,8 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - ./conf/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - "${MYSQL_PORT}:3306"
 
   project.httpd2:
     image: httpd:2.4
@@ -37,9 +39,9 @@ services:
     volumes:
       - ./${PROJECT_PATH}:${PROJECT_WORKING_DIR}
 
-  project.blackfire:
+  blackfire:
     image: blackfire/blackfire
-    container_name: ${PROJECT_CONTAINER}.blackfire
+    container_name: blackfire
     environment:
       - BLACKFIRE_CLIENT_ID=${BLACKFIRE_CLIENT_ID}
       - BLACKFIRE_CLIENT_TOKEN=${BLACKFIRE_CLIENT_TOKEN}
