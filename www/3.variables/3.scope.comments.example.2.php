@@ -6,6 +6,7 @@
 
 function foo()
 {
+    //global $foo;
     $foo = 'foo';
 
     function bar()
@@ -19,5 +20,5 @@ function foo()
 
     echo "\$foo in FOO is: " . $foo . "\n";
 }
-
+//$foo = 554444;
 foo();

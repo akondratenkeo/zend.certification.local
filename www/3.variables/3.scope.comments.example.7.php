@@ -1,6 +1,6 @@
 <?php
 
-$var = 1;
+/*$var = 1;
 function foo() {
     $var = &$GLOBALS['var'];
     var_dump($var);
@@ -22,14 +22,15 @@ function foo() {
 }
 foo();
 var_dump($var);                // this is ok.
-
+*/
 
 $var = 1;
 function bar() {
     global $var;
-    unset($GLOBALS['var']);    // unset global $a, the local $a is still here.
+    unset($GLOBALS['var']);
+    $var = 125;// unset global $a, the local $a is still here.
     var_dump($var);            // this is ok.
     var_dump($GLOBALS['var']); // Undefined index: var
 }
-foo();
+bar();
 var_dump($var);

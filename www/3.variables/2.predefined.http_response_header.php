@@ -6,3 +6,5 @@ function get_contents() {
 }
 
 get_contents();
+http_response_headers():
+var_dump($php_errormsg);

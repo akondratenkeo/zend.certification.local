@@ -4,7 +4,7 @@
  * Какой будет вывод данного скрипта?
  */
 
-function &get_instance_ref() {
+function get_instance_ref() {
     static $obj;
 
     echo 'Статический объект: ';
@@ -28,18 +28,19 @@ function &get_instance_noref() {
 
     if (!isset($obj)) {
         // Присвоить объект статической переменной
-        $obj = new stdClass();
-        $obj->property = 0;
+        $obj = [];
     }
 
-    $obj->property++;
+    $obj[] = 'A';
     return $obj;
 }
 
-$obj1 = get_instance_ref();
-$still_obj1 = get_instance_ref();
+//$obj1 = get_instance_ref();
+//$still_obj1 = get_instance_ref();
 
 echo "\n";
 
-$obj2 = get_instance_noref();
-$still_obj2 = get_instance_noref();
+$obj2 = &get_instance_noref();
+$obj2[] = 'B';
+$still_obj2 = &get_instance_noref();
+var_dump($still_obj2);
